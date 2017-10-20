@@ -1,0 +1,47 @@
+#!/bin/bash
+# this script is for drawing Synthetic and Observation data-3components  
+#
+rm -f core
+
+echo 'Input Station name (eg, MXT)'
+read staName
+echo 'Input epicentral distance of ' ${staName}
+read epiDist
+
+Srad=${staName}srad
+Stra=${staName}stra
+Sver=${staName}sver
+Orad=${staName}1rad
+Otra=${staName}1tra
+Over=${staName}1ver
+
+outf=${staName}OS.ps
+stapdf=${staName}OS.pdf
+staeps=${staName}OS.eps
+
+
+psxy $Orad -JX10/5 -R0.0/200.0/-1.2/3.0 -B1a50f10.0:"Time (s)":S -X4.0 -Y3.0 -K -W1,black > $outf 
+psxy $Srad -JX -R -X0.0 -Y0.0 -O -K -W1,red >> $outf
+pstext -J -R -X0.0 -Y0.5 -O -K  <<EOF>> $outf
+190.0 0.0 12 0 0 TR Rad.
+EOF
+
+psxy $Otra -JX -R -X0.0 -Y1.5 -O -K  -W1,black >> $outf
+psxy $Stra -JX -R -X0.0 -Y0.0 -O -K -W1,red >> $outf
+pstext -J -R -X0.0 -Y0.5 -O -K  <<EOF>> $outf
+190.0 0.0 12 0 0 TR Tran.
+EOF
+
+psxy $Over -JX -R -X0.0 -Y1.5 -O -K -W1,black >> $outf
+psxy $Sver -JX -R  -X0.0 -Y0.0 -O -K -W1,red >> $outf
+pstext -J -R -X0.0 -Y0.5 -O -K  <<EOF>> $outf
+190.0 0.0 12 0 0 TR Ver.
+EOF
+
+pstext -JX -R -X0.0 -Y0.5 -O  <<EOF>> $outf
+100.0 0.0 12 0 0 BR ${staName} ${epiDist}km 
+EOF
+
+
+ps2pdf $outf
+convert $stapdf $staeps
